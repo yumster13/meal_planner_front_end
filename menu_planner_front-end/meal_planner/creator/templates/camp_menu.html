@@ -1,0 +1,182 @@
+{% extends 'base.html' %}
+{% load crispy_forms_tags %}
+{% load custom_tags %}
+
+{% block content %}
+  <div class="container mt-3">
+    <div id="responseMessage" class="alert mt-3" style="display:none;"></div>
+    <!-- Button trigger modal -->
+    {% if camp_objects.status == 'En Cours' %}
+      <!--<button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#exampleModal">Ajout de Menu</button>-->
+      <button type="button" class="btn btn-primary">
+        <a href="{% url 'setFinished' camp=camp_objects.id %}" class="text-light text-decoration-none">Fini le Menu ?</a>
+      </button>
+    {% endif %}
+    <!--<form action="{% url 'menus' camp=camp_objects.id %}" class="" method="post">
+      {% csrf_token %}
+      <div class="row">
+        <div class="col-md-6">
+          <div class="form-row">
+            <div class="form-group col-md-3">{{ search.date|as_crispy_field }}</div>
+          </div>
+        </div>
+      </div>
+      <input class="btn btn-primary" type="submit" value="Rechercher" />
+    </form>
+  </div>-->
+
+  <!-- Modal -->
+  <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="exampleModalLabel">Ajout de menu au camp</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <form action="{% url 'addMenu' camp=camp_objects.id %}" class="" method="post">
+            {% csrf_token %}
+            <div class="row">
+              <div class="col-md-6">
+                <div class="form-row">
+                  <div class="form-group">{{ menu_form.recipe|as_crispy_field }}</div>
+                  <div class="form-group">{{ menu_form.date|as_crispy_field }}</div>
+                  <div class="form-group">{{ menu_form.moment|as_crispy_field }}</div>
+                  <div class="form-group">{{ menu_form.nbr_leaders|as_crispy_field }}</div>
+                  <div class="form-group">{{ menu_form.nbr_vege|as_crispy_field }}</div>
+                  <div class="form-group">{{ menu_form.nbr_anim|as_crispy_field }}</div>
+                </div>
+              </div>
+            </div>
+            <input class="btn btn-primary" type="submit" value="Ajouter le menu" />
+          </form>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="container mt-3">
+    <nav>
+      <div class="nav nav-tabs" id="nav-tab" role="tablist">
+        <button class="nav-link active" id="nav-home-tab" data-bs-toggle="tab" data-bs-target="#nav-home" type="button" role="tab" aria-controls="nav-home" aria-selected="true">Tout</button>
+        {% for key, values in menu_dict.items %}
+          <button class="nav-link" id="nav-{{ key }}-tab" data-bs-toggle="tab" data-bs-target="#nav-{{ key }}" type="button" role="tab" aria-controls="nav-{{ key }}" aria-selected="false">{{ date_dict|get_value_from_dict:key }}</button>
+        {% endfor %}
+      </div>
+    </nav>
+    <div class="tab-content" id="nav-tabContent">
+      <div class="tab-pane fade show active" id="nav-home" role="tabpanel" aria-labelledby="nav-home-tab">
+        <div class="table-container">
+          <table class="table">
+            <thead>
+              <tr>
+                <th scope="col">Date</th>
+                <th scope="col">Moment</th>
+                <th scope="col">Recipe</th>
+                <th scope="col">Animés</th>
+                <th scope="col">Vegetariens</th>
+                <th scope="col">Chefs</th>
+                {% if camp_objects.status == 'En Cours' %}
+                  <th scope="col">Actions</th>
+                {% endif %}
+              </tr>
+            </thead>
+            <tbody>
+              {% for menu in menus %}
+                <tr>
+                  <td>{{ menu.date }}</td>
+                  <td>{{ menu.moment }}</td>
+                  <td>{{ menu.recipe_name }}</td>
+                  <td>{{ menu.nbr_anim }}</td>
+                  <td>{{ menu.nbr_vege }}</td>
+                  <td>{{ menu.nbr_leaders }}</td>
+                  {% if camp_objects.status == 'En Cours' %}
+                    <td>
+                      <a href="{% url 'deleteMenu' camp=camp_objects.id menu=menu.id %}"><i class="fa-regular fa-trash-can" style="color: #bc1515;"></i></a>
+                    </td>
+                  {% endif %}
+                </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
+      </div>
+      {% for key, values in menu_dict.items %}
+        <div class="tab-pane fade" id="nav-{{ key }}" role="tabpanel" aria-labelledby="nav-{{ key }}-tab">
+          <div class="table-container">
+            <table class="table">
+              <thead>
+                <tr>
+                  <th scope="col">Date</th>
+                  <th scope="col">Moment</th>
+                  <th scope="col">Recipe</th>
+                  <th scope="col">Animés</th>
+                  <th scope="col">Vegetariens</th>
+                  <th scope="col">Chefs</th>
+                  <th scope="col">Actions</th>
+                </tr>
+              </thead>
+              {% for value in values %}
+                <tbody>
+                  <form action="{% url 'addMenu' camp=camp_objects.id %}" class="" method="post">
+                    {% csrf_token %}
+                    <tr>
+                      <td>{{ value.date|as_crispy_field }}</td>
+                      <td>{{ value.moment|as_crispy_field }}</td>
+                      <td>{{ value.recipe|as_crispy_field }}</td>
+                      <td>{{ value.nbr_anim|as_crispy_field }}</td>
+                      <td>{{ value.nbr_vege|as_crispy_field }}</td>
+                      <td>{{ value.nbr_leaders|as_crispy_field }}</td>
+                      <td>
+                        <input class="btn btn-primary" type="submit" value="Ajouter le menu" />
+                      </td>
+                    </tr>
+                  </form>
+                </tbody>
+              {% endfor %}
+            </table>
+          </div>
+        </div>
+      {% endfor %}
+    </div>
+  </div>
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script>
+        $(document).ready(function() {
+            $('form').on('submit', function(event) {
+                event.preventDefault();
+                var form = $(this);
+                $.ajax({
+                    url: form.attr('action'),
+                    type: form.attr('method'),
+                    data: form.serialize(),
+                    dataType: 'json',
+                    success: function(response) {
+                        let alertBox = $('#responseMessage');
+                        if (response.success) {
+                            alertBox.removeClass('alert-danger').addClass('alert-success').text(response.message).show();
+                        } else {
+                            if (response.errors) {
+                                let errors = '';
+                                for (let field in response.errors) {
+                                    errors += field + ': ' + response.errors[field].join(', ') + '<br>';
+                                }
+                                alertBox.removeClass('alert-success').addClass('alert-danger').html(errors).show();
+                            } else {
+                                alertBox.removeClass('alert-success').addClass('alert-danger').text(response.message).show();
+                            }
+                        }
+                        setTimeout(function() {
+                            alertBox.fadeOut('slow');
+                        }, 5000); // Hide after 5 seconds
+                    }
+                });
+            });
+        });
+    </script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+{% endblock %}

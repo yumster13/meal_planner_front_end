@@ -1,0 +1,54 @@
+{% extends "base.html" %}
+{% load crispy_forms_tags %}
+
+{% block content %}
+<div class="container mt-5">
+    <div class="row">
+        <div class="col-md-6">
+            <div class="card shadow-sm mb-4">
+                <div class="card-header">
+                    <h3>Create User</h3>
+                </div>
+                <div class="card-body">
+                    <form action="{% url 'createUser' %}" method="post">
+                        {% csrf_token %}
+                        <div class="row">
+                            <div class="col-md-12">
+                                <div class="form-group mb-3">
+                                    {{ user_form.email|as_crispy_field }}
+                                </div>
+                                <div class="form-group mb-3">
+                                    {{ user_form.section|as_crispy_field }}
+                                </div>
+                            </div>
+                        </div>
+                        <button type="submit" class="btn btn-primary">Create</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6">
+            <div class="card-deck">
+                <div class="card">
+                    <div class="card-body">
+                        <h5 class="card-title">Calculate the quantities for each camp</h5>
+                        <a href="{% url 'calculate_quantities' %}" class="btn btn-success">Calculate</a>
+                    </div>
+                </div>
+                <div class="card">
+                    <div class="card-body">
+                        <h5 class="card-title">Calculate the total quantities for the camps</h5>
+                        <a href="{% url 'generate_ingredient_list' %}" class="btn btn-success">Calculate</a>
+                    </div>
+                </div>
+                <div class="card">
+                    <div class="card-body">
+                        <h5 class="card-title">Calculate the SU quantities</h5>
+                        <a href="{% url 'generate_ingredient_su' %}" class="btn btn-success">Calculate</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

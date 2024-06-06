@@ -1,0 +1,155 @@
+{% extends "base.html" %}
+{% load crispy_forms_tags %}
+
+{% block content %}
+<div class="container mt-3">
+{% if request.user.is_staff %}
+<!-- Button trigger modal -->
+<button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#exampleModal">
+    Nouveau camp
+</button>
+<a href="{% url 'hideAll' %}" class="btn btn-danger">Hide All</a>
+</div>
+{% endif %}
+  
+  <!-- Modal -->
+  <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="exampleModalLabel">Nouveau Camp</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+            <form action="{% url 'createCamp' %}" method="post">
+                {% csrf_token %}
+                <div class="row">
+                  <div class="col-md-6">
+                    <div class="form-row">
+                      <div class="form-group ">{{ camp_form.name|as_crispy_field }}</div>
+                      
+                      <div class="form-group">
+                        {{ camp_form.section|as_crispy_field }}
+                        <button type="button" id="selectAllSections" class="btn btn-secondary btn-sm mt-2 me-2">Tout sélectionner</button>
+                    </div>
+                      
+                      <div class="form-group ">{{ camp_form.deadline|as_crispy_field }}</div>
+                      <div class="form-group ">{{ camp_form.type|as_crispy_field }}</div>
+                      
+                    </div>
+                  </div>
+                </div>
+                <input class="btn btn-primary" type="submit" value="Create" />
+              </form>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+        </div>
+      </div>
+    </div>
+</div>
+
+
+  <div class="container mt-3">
+    <div class="row">
+        {% for camp in camps %}
+        <div class="col-md-3 mb-3 d-flex">
+            <div class="card bg-light flex-fill">
+                <div class="card-header">
+                    <h3 class="card-title">{{ camp.name }}</h3>
+                </div>
+                <div class="card-body d-flex flex-column">
+                    <h5>{{ camp.section.name }}</h5>
+                    {% if camp.status == 'Fini' %}
+                    <div class="card-title bg-success bg-opacity-25 p-2 border border-success rounded">
+                        <span class="me-2">{{ camp.status }}</span>
+                        <span class="fa-regular fa-circle-check"></span>
+                    </div>
+                    {% elif camp.status == 'En Cours' %}
+                    <div class="card-title bg-info bg-opacity-25 p-2 border border-info rounded">
+                        <span class="me-2">{{ camp.status }}</span>
+                        <span class="fa-solid fa-spinner"></span>
+                    </div>
+                    {% elif camp.status == 'Pas commencé' %}
+                    <div class="card-title bg-warning bg-opacity-25 p-2 border border-warning rounded">
+                        <span class="me-2">{{ camp.status }}</span>
+                        <span class="fa-solid fa-circle-exclamation"></span>
+                    </div>
+                    {% endif %}
+                    <p class="card-text">{{ camp.location.town }}</p>
+                    <div class="mt-auto">
+                        {% if camp.status == 'Fini' %}
+                        <div class="row">
+                            <div class="col">
+                                <a href="{% url 'menus' camp=camp.id %}" class="btn btn-primary" aria-current="page">Voir le menu</a>
+                            </div>
+                            <div class="col">
+                                <a href="{% url 'resetStatus' camp=camp.id %}" class="btn btn-primary" aria-current="page">Modifier</a>
+                            </div>
+                        </div>
+                        {% elif camp.status == 'En Cours' %}
+                        <a href="{% url 'menus' camp=camp.id %}" class="btn btn-primary" aria-current="page">Modifier le menu</a>
+                        {% elif camp.status == 'Pas commencé' %}
+                        <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addInfoModel{{camp.id}}">
+                          Ajouter des informations
+                        </button>
+                        {% endif %}
+                        <div class="modal fade" id="addInfoModel{{camp.id}}" tabindex="-1" aria-labelledby="addInfoModel{{camp.id}}" aria-hidden="true">
+                          <div class="modal-dialog">
+                            <div class="modal-content">
+                              <div class="modal-header">
+                                <h5 class="modal-title" id="addInfoModel{{camp.id}}">Mettre à jour les informations du camp</h5>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                              </div>
+                              <div class="modal-body">
+                                  <form action={% url 'addInfo' camp=camp.id %} class="" method="post">
+                                      {% csrf_token %}
+                                      <div class="row">
+                                        <div class="col-md-6">
+                                          <div class="form-row">
+                                            <div class="form-group ">{{ locationCamp.road|as_crispy_field }}</div>
+                                            <div class="form-group ">{{ locationCamp.town|as_crispy_field }}</div>
+                                            <div class="form-group ">{{ locationCamp.number|as_crispy_field }}</div>
+                                            <div class="form-group ">{{ locationCamp.codePostal|as_crispy_field }}</div>
+                                            <div class="form-group ">{{ locationCamp.country|as_crispy_field }}</div>
+                                            <div class="form-group ">{{ infoCamp.from_date|as_crispy_field }}</div>
+                                            <div class="form-group ">{{ infoCamp.to_date|as_crispy_field }}</div>
+                                          </div>
+                                        </div>
+                                      </div>
+                                      <input class="btn btn-primary" type="submit" value="Create" />
+                                    </form>
+                              </div>
+                              <div class="modal-footer">
+                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+
+</div>
+<script>
+  document.addEventListener('DOMContentLoaded', function () {
+      document.getElementById('selectAllSections').addEventListener('click', function () {
+          const checkboxes = document.querySelectorAll('#exampleModal input[name="section"]');
+          checkboxes.forEach(checkbox => {
+              checkbox.checked = true;
+          });
+      });
+      document.getElementById('deselectAllSections').addEventListener('click', function () {
+          const checkboxes = document.querySelectorAll('#exampleModal input[name="section"]');
+          checkboxes.forEach(checkbox => {
+              checkbox.checked = false;
+          });
+      });
+  });
+  </script>
+  
+{% endblock %}

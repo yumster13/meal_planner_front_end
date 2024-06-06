@@ -1,0 +1,100 @@
+{% extends "base.html" %}
+{% load crispy_forms_tags %}
+
+{% block content %}
+<style>
+    .custom-pill-container {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.5rem;  /* Optional: adjust the spacing between pills */
+    }
+</style>
+<div class="container mt-3">
+{% if request.session.group == 'staff' %}
+<!-- Button trigger modal -->
+<button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#exampleModal">
+    Nouveau Producteur
+</button>
+</div>
+{% endif %}
+  
+  <!-- Modal -->
+  <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="exampleModalLabel">Nouveau Producteur</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+            <form action="{% url 'addProducteur' %}" method="post">
+                {% csrf_token %}
+                <div class="row">
+                  <div class="col-md-6">
+                    <div class="form-row">
+                        <div class="form-group ">{{ producteurForm.category|as_crispy_field }}</div>
+                        <div class="form-group ">{{ producteurForm.name|as_crispy_field }}</div>
+                        <div class="form-group ">{{ addressForm.road|as_crispy_field }}</div>
+                        <div class="form-group ">{{ addressForm.number|as_crispy_field }}</div>
+                        <div class="form-group ">{{ addressForm.town|as_crispy_field }}</div>
+                        <div class="form-group ">{{ addressForm.codePostal|as_crispy_field }}</div>
+                        <div class="form-group ">{{ addressForm.country|as_crispy_field }}</div>
+                    </div>
+                  </div>
+                </div>
+                <input class="btn btn-primary" type="submit" value="Create" />
+              </form>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+        </div>
+      </div>
+    </div>
+</div>
+
+
+  <div class="container mt-3">
+    <div class="row">
+        {% for producteur in producteur_list %}
+        <div class="col-md-3 mb-3 d-flex">
+            <div class="card bg-light flex-fill">
+                <div class="card-header">
+                    <h3 class="card-title">{{ producteur.name }}</h3>
+                </div>
+                <div class="card-body d-flex flex-column">
+                    <div class="custom-pill-container mb-2">
+                        {% for cat in producteur.category.all %}
+                        <div class="card-title bg-warning bg-opacity-25 p-2 border border-warning rounded-pill me-2 mb-2">
+                            <span>{{ cat.name }}</span>
+                        </div>
+                        {% endfor %}
+                    </div>
+                    <div>{{ producteur.location.town }}</div>
+                    <button class="btn btn-primary mt-2 open-maps-btn"
+                            data-address="{{ producteur.location.road }}, {{ producteur.location.number }}, {{ producteur.location.codePostal }}, {{ producteur.location.town }}">
+                        Open in Google Maps
+                    </button>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const buttons = document.querySelectorAll('.open-maps-btn');
+
+        buttons.forEach(button => {
+            button.addEventListener('click', function () {
+                const address = encodeURIComponent(this.getAttribute('data-address'));
+                const url = `https://www.google.com/maps/search/?api=1&query=${address}`;
+                window.open(url, '_blank');
+            });
+        });
+    });
+</script>
+
+{% endblock %}

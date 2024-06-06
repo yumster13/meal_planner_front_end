@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html>
+<head>
+    {% load static %}
+    <script src="https://kit.fontawesome.com/341133a8ba.js" crossorigin="anonymous"></script>
+    <link rel="stylesheet" href="{% static 'base.css' %}">
+    <script src="{% static 'jquery.min.js' %}"></script>
+    <title>{% block title %}{% endblock %}</title>
+    {% load bootstrap5 %}
+    {% bootstrap_css %}
+    {% bootstrap_javascript %}
+    <style>
+        html,
+        body,
+        .main {
+            height: 100%;
+            overflow: hidden; /* Prevent scrollbars */
+        }
+        .sidebar {
+            height: 100vh; /* Use viewport height */
+            overflow-y: auto; /* Add scrollbar if needed */
+        }
+        .navigation {
+            padding-bottom: 60px; /* Adjust padding to accommodate dropdown */
+        }
+    </style>
+</head>
+<body>
+    <div class="container mt-4">
+        {% block content %}
+
+        {% endblock %}
+    </div>
+</div>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+</body>
+</html>

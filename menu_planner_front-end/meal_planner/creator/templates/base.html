@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html>
+<head>
+    {% load static %}
+    <script src="https://kit.fontawesome.com/341133a8ba.js" crossorigin="anonymous"></script>
+    <link rel="stylesheet" href="{% static 'base.css' %}">
+    <script src="{% static 'jquery.min.js' %}"></script>
+    <title>{% block title %}{% endblock %}</title>
+    {% load bootstrap5 %}
+    {% bootstrap_css %}
+    {% bootstrap_javascript %}
+    <style>
+        html, body {
+            height: 100%;
+            margin: 0;
+            overflow: hidden;
+        }
+        .main {
+            display: flex;
+            height: 100%;
+        }
+        .sidebar {
+            width: 280px;
+            height: 100vh;
+            overflow-y: auto;
+            background-color: #343a40;
+        }
+        .content {
+            flex-grow: 1;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+        }
+        .content-inner {
+            flex-grow: 1;
+            overflow-y: auto;
+            padding: 20px;
+        }
+        .table-container {
+            overflow-y: auto;
+            max-height: 80vh; /* Adjust as needed */
+        }
+    </style>
+</head>
+<body>
+<div class="main">
+    <div class="sidebar d-flex flex-column p-3 text-white">
+        <a href="/" class="d-flex align-items-center text-white text-decoration-none mb-4">
+            <svg class="bi me-2" width="40" height="32"><use xlink:href="#bootstrap"/></svg>
+            <span class="fs-4">Meal Planner</span>
+        </a>
+        <ul class="navigation nav nav-pills flex-column">
+            {% if request.session.group == 'staff' %}
+            <li class="nav-item">
+                <a href="{% url 'home' %}" class="nav-link  {% if home %}active{% else %}text-white{% endif %}" aria-current="page">
+                    <i class="fa-solid fa-house"></i>
+                    Admin
+                </a>
+            </li>
+            {% endif %}
+            <li class="nav-item">
+                <a href="{% url 'camps' %}" class="nav-link text-white {% if camp %}active{% else %}text-white{% endif %}">
+                    <i class="fa-solid fa-tents"></i>
+                    Camps
+                </a>
+            </li>
+            <li class="nav-item">
+                <a href="{% url 'recipes' %}" class="nav-link text-white {% if recipe %}active{% else %}text-white{% endif %}">
+                    <i class="fa-solid fa-utensils"></i>
+                    Recettes
+                </a>
+            </li>
+            <li class="nav-item">
+                <a href="{% url 'engredients' %}" class="nav-link text-white {% if engredient %}active{% else %}text-white{% endif %}">
+                    <i class="fa-solid fa-seedling"></i>
+                    Ingrédients
+                </a>
+            </li>
+            <li class="nav-item">
+                <a href="{% url 'ingredientsSu' %}" class="nav-link text-white {% if engredientList %}active{% else %}text-white{% endif %}">
+                    <i class="fa-solid fa-building-wheat"></i>
+                    Ingrédients Su
+                </a>
+            </li>
+            <li class="nav-item">
+                <a href="{% url 'producteurs' %}" class="nav-link text-white {% if producteurs %}active{% else %}text-white{% endif %}">
+                    <i class="fa-regular fa-clipboard"></i>
+                    Producteurs
+                </a>
+            </li>
+            <!--<li class="nav-item">
+                <a href="#" class="nav-link text-white">
+                    <i class="fa-solid fa-building-wheat"></i>
+                    Stock
+                </a>
+            </li>-->
+        </ul>
+        <div class="mt-auto">
+            <a href="{% url 'logout' %}" class="nav-link text-white">
+                <i class="fa-solid fa-right-from-bracket"></i>
+                Logout
+            </a>
+        </div>
+    </div>
+    <div class="content">
+        <div class="content-inner">
+            {% if messages %}
+                <ul class="messages">
+                    {% for message in messages %}
+                        {% if message.tags == 'success' %}
+                            <div class="alert alert-success" role="alert">
+                                <li class="success">{{ message }}</li>
+                            </div>
+                        {% elif message.tags == 'error' %}
+                            <div class="alert alert-danger" role="alert">
+                                <li class="error">{{ message }}</li>
+                            </div>
+                        {% else %}
+                            <div class="alert alert-danger" role="alert">
+                                <li>{{ message }}</li>
+                            </div>
+                        {% endif %}
+                    {% endfor %}
+                </ul>
+            {% endif %}
+            {% block content %}
+            {% endblock %}
+        </div>
+    </div>
+</div>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+</body>
+</html>

@@ -1,0 +1,78 @@
+{% extends 'base.html' %}
+
+{% block content %}
+  <style>
+    .thead-fixed th {
+      position: sticky;
+      top: 0;
+      background-color: #ffffff;
+      z-index: 1;
+  }
+
+  .table-container {
+      height: 100vh; /* Full viewport height */
+      display: flex;
+      flex-direction: column;
+      overflow-y: hidden; /* Prevent double scrollbar */
+  }
+
+  .table-responsive {
+      flex: 1;
+      overflow-y: 100%%; /* Allow scrolling only on the table body */
+  }
+  </style>
+  <div class="table-container">
+    <div class="table-responsive">
+      <table class="table mt-3">
+        <thead class="thead-fixed">
+          <tr>
+            <th scope="col">
+              <div class="card-title bg-success bg-opacity-25 p-2 border border-success rounded">
+                <span class="me-2">Ingrédient</span>
+              </div>
+            </th>
+            <th scope="col">
+              <div class="card-title bg-success bg-opacity-25 p-2 border border-success rounded">
+                <span class="me-2">Catégorie</span>
+              </div>
+            </th>
+            <th scope="col">
+              <div class="card-title bg-success bg-opacity-25 p-2 border border-success rounded">
+                <span class="me-2">Unité</span>
+              </div>
+            </th>
+            <th scope="col">
+              <div class="card-title bg-success bg-opacity-25 p-2 border border-success rounded">
+                <span class="me-2">Prix moyen</span>
+              </div>
+            </th>
+            <th scope="col">
+              <div class="card-title bg-success bg-opacity-25 p-2 border border-success rounded">
+                <span class="me-2">Saisons</span>
+              </div>
+            </th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for key, engredient in engredients.items %}
+            <tr>
+              <th scope="row">{{ key }}</th>
+              <td>
+                <div class="card-title bg-warning bg-opacity-25 p-2 border border-warning rounded-pill d-inline-block me-2">{{ engredient.cat }}</div>
+              </td>
+              <td>{{ engredient.unit }}</td>
+              <td>{{ engredient.avg_price }}</td>
+              <td>
+                {% for season in engredient.seasons %}
+                  <div class="card-title bg-warning bg-opacity-25 p-2 border border-warning rounded-pill d-inline-block me-2">
+                    <span>{{ season.name }}</span>
+                  </div>
+                {% endfor %}
+              </td>
+            </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+{% endblock %}

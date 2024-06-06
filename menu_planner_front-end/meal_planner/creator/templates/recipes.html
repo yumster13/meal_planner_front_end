@@ -1,0 +1,60 @@
+{% extends "base.html"%}
+
+{% block content %}
+<style>
+    .thead-fixed th {
+        position: sticky;
+        top: 0;
+        background-color: #ffffff;
+        z-index: 1;
+    }
+
+    .table-container {
+        height: 100vh; /* Full viewport height */
+        display: flex;
+        flex-direction: column;
+        overflow-y: hidden; /* Prevent double scrollbar */
+    }
+
+    .table-responsive {
+        flex: 1;
+        overflow-y: 100; /* Allow scrolling only on the table body */
+    }
+</style>
+
+<div class="container m-3">
+    {% if request.user.is_staff %}
+    <a href="{% url 'createRecipe' %}" class="btn btn-primary" aria-current="page">Nouvelle Recette</a>
+    {% endif %}
+</div>
+<div class="table-container">
+    <div class="table-responsive">
+        <table class="table mt-3">
+            <thead class="thead-fixed">
+                <tr>
+                    <th scope="col"><div class="card-title bg-success bg-opacity-25 p-2 border border-success rounded"><span class="me-2">Recette</span></div></th>
+                    <th scope="col"><div class="card-title bg-success bg-opacity-25 p-2 border border-success rounded"><span class="me-2">Prix moyen</span></div></th>
+                    <th scope="col"><div class="card-title bg-success bg-opacity-25 p-2 border border-success rounded"><span class="me-2">Prairie ?</span></div></th>
+                    <th scope="col"><div class="card-title bg-success bg-opacity-25 p-2 border border-success rounded"><span class="me-2">Catégorie</span></div></th>
+                    <th scope="col"><div class="card-title bg-success bg-opacity-25 p-2 border border-success rounded"><span class="me-2">Actions</span></div></th>
+                </tr>
+            </thead>
+            <tbody>
+            {% for key,recipe in recipes.items %}
+                <tr>
+                    <th scope="row">{{ key }}</th>
+                    <td>{{ recipe.avg_price }}</td>
+                    <td>{% if recipe.prairie == True %}OUI{% else %}NON{% endif %}</td>
+                    <td>
+                    <div class="card-title bg-warning bg-opacity-25 p-2 border border-warning rounded-pill d-inline-block me-2">
+                      <span>{{ recipe.tags }}</span>
+                    </div>
+                    </td>
+                    <td></td>
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}
