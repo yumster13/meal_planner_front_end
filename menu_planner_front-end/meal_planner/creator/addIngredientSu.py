@@ -26,38 +26,22 @@ def generate_ingredient_su(request):
         for menu in menus:
             engredients = get_recipe_id_ingredients(menu.recipe)
             recipe_id = menu.recipe
-
-            # Filter RecipeXEngredient related to the specific recipe and age
-            """filtered_ingredient_ids = RecipeXEngredient.objects.filter(
-                recipe__id=recipe_id,
-                age=Ages.GG
-            ).values_list('ingredient_id', flat=True).distinct()
-            print(filtered_ingredient_ids)"""
-            #print(engredients)
             for key,engredient in engredients.items():
-                #print('engredient',key,engredient)
                 quantity_anim = 0
                 quantity_lead = 0
                 quantity_vege = 0
                 ingVege = is_recipe_vege(recipe_id,engredient[0])
-                #RecipeXEngredient.objects.filter(recipe__id=recipe_id,age=Ages.GG,ingredient__id = engredient['ingredients__ingredient__id']).values('vege').distinct()
-                
-                #print(ingVege)
+
                 quantity = recipe_quant(recipe_id,age,engredient[0])
-                #print(quantity)
+
                 if str(ingVege['vege']) == 'True':
-                    #quantity_leaders = recipe_quant(recipe_id,Ages.GG,engredient['ingredients__ingredient__id'])
-                    #RecipeXEngredient.objects.filter(recipe__id=recipe_id,age=Ages.GG,ingredient__id = engredient['ingredients__ingredient__id']).values('quantity').distinct()
-                    #print(quantity['leaders'], menu.nbr_vege)
+
                     quantity_vege = float(quantity['leaders']) * menu.nbr_vege
                 else:
-                    #quantity_anim = quantity_leaders = recipe_quant(recipe_id,age,engredient['ingredients__ingredient__id'])
-                    #RecipeXEngredient.objects.filter(recipe__id=recipe_id,age=age,ingredient__id = engredient['ingredients__ingredient__id']).values('quantity').distinct()
-                    #quantity_leaders = quantity_leaders = recipe_quant(recipe_id,Ages.GG,engredient['ingredients__ingredient__id'])
-                    #RecipeXEngredient.objects.filter(recipe__id=recipe_id,age=Ages.GG,ingredient__id = engredient['ingredients__ingredient__id']).values('quantity').distinct()
+
                     quantity_anim = float(quantity['anim']) * menu.nbr_anim
                     quantity_lead = float(quantity['leaders']) * menu.nbr_leaders
-                #print(quantity_anim,"||",quantity_lead,"||",quantity_vege)
+
                 categories = str(engredient[2])
 
                 total_quantity = quantity_lead + quantity_anim + quantity_vege

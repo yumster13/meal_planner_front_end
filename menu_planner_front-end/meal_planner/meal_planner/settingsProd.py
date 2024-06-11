@@ -23,10 +23,9 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = 'django-insecure-e$a4@c1=pwgc8ucm7g5df-uw^-b2#(w@%nkbwnn6320gz%r1h$'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = False
 
-ALLOWED_HOSTS = []
-
+ALLOWED_HOSTS = ['www.campeat.be']
 
 
 # Application definition
@@ -46,7 +45,6 @@ INSTALLED_APPS = [
     'crispy_forms',
     'crispy_bootstrap5',
     'axes',
-    'sslserver',
 ]
 
 MIDDLEWARE = [
@@ -65,7 +63,6 @@ MIDDLEWARE = [
 MIDDLEWARE_CLASSES = [
 
 ]
-
 
 TEMPLATE_CONTEXT_PROCESSORS = [
     'django.core.context_processors.request',
@@ -107,9 +104,9 @@ WSGI_APPLICATION = 'meal_planner.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'mealplannertest',
-        'USER': 'user',
-        'PASSWORD': 'user_local',
+        'NAME': 'mealplanner',
+        'USER': 'mealplanner',
+        'PASSWORD': 'sOY6xkos6UPo8d9JzLxuFPVyF#LnuF',
         'HOST': '127.0.0.1',
         'PORT': '3306',
     }
@@ -186,23 +183,19 @@ AUTH_LOGOUT_ROUTE = ('logout')
 
 SESSION_EXPIRE_AT_BROWSER_CLOSE = True
 
-AXES_FAILURE_LIMIT = 50
+AXES_FAILURE_LIMIT = 5
 AXES_LOCK_OUT_AT_FAILURE = True
 AXES_RESET_ON_SUCCESS = True
 AXES_COOLOFF_TIME = 2
 
 SESSION_SECURITY_EXPIRE_AFTER  = 600
 
-API_URL = 'https://127.0.0.1:7000/'
-VERIFY_SSL = False
+API_URL = 'https://www.api.campeat.be/'
 
-SECURE_PROXY_SSL_HEADER = ("HTTP_X_FORWARDED_PROTOCOL", "https")
+CLIENT_ID = 'TjrdyFwY16wuQHikQfaZOmkPayt0Cc3HUxRXIlA1'
+CLIENT_SECRET = 'pg7XDe8ncJJ3GHQTCtakvD8dVQW9MyyCdI5PxrnULoI78XjpIdv38s9409OGoxTMUeSfARxQgFkdsIMziaNY2m7do9A7vk5c1LKmXvM2cI2iYuJxvJKqqepkScIcPB0z'
+TOKEN_URL = 'https://www.api.campeat.be/o/token/'
 
-
-CLIENT_ID = '177fXOLv4Xygf0h6YSuOVrW6tNA5wkoAbTpYfg7n'
-CLIENT_SECRET = 'O6fVnsAWnAwnb6ys7zcvz1xw3OJSj5SCGjz8IiZ6O9OSoEobFrYflpdN7WpJRgm2IsOEY6yEFg3Y03uYxbmE3naKKpjwxtbOOgE8XUYf7LLoWqeseS3F22p1zPBRmvS2'
-TOKEN_URL = 'https://localhost:7000/o/token/'
-
-VERIFY = False
+VERIFY = True
 
 ACCESS_TOKEN = ''

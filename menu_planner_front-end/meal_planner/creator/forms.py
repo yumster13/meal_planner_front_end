@@ -158,3 +158,6 @@ class ProducteurModelForm(forms.ModelForm):
     class Meta:
         model = Producteur
         fields = ['name','category']
+
+class SearchForm(forms.Form):
+    name = forms.CharField(label="",max_length=100,required=False)

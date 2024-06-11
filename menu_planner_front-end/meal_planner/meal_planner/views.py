@@ -103,10 +103,13 @@ def CustomLoginView(request):
         if response.status_code == 200:
             token_data = response.json()
             get_initial_tokens(request,username,password)
-            user = User.objects.get(username=username)
+            try:
+                user = User.objects.get(username=username)
+            except User.DoesNotExist:
+                user = User.objects.create_user(username=username)
+
             request.session['group'] = str(user.groups.all()[0].name) if user.groups.all() else 'staff' 
             return redirect(settings.LOGIN_REDIRECT_URL)
-            return JsonResponse(token_data)
         else:
             return HttpResponse('Invalid login', status=401)
     else:

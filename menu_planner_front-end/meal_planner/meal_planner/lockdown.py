@@ -23,18 +23,13 @@ class LoginRequiredMiddleware(MiddlewareMixin):
         'django.contrib.auth.context_processors.auth'."""
         current_route_name = request.path_info
         print(current_route_name)
-        headers = {
-        'Referer': f'{settings.API_URL}/authenticated',
-        "Authorization": f"Bearer {request.session['access_token']}"
-        }
-        authenticated = session.get(f'{settings.API_URL}/authenticated',data = {},headers=headers)
-        authenticated = authenticated.json()
-        print(authenticated)
-        if not authenticated['value'] == 'True' and current_route_name.find('/admin/') == -1 and current_route_name.find('/o/token') == -1 :
-            current_route_name = resolve(request.path_info).url_name
-            print(current_route_name)
-            if not current_route_name in settings.AUTH_EXEMPT_ROUTES:
-                return redirect('login') 
+        expires_at = request.session.get('expires_at')
+        if not expires_at or time.time() >= expires_at:
+            if  current_route_name.find('/admin/') == -1 and current_route_name.find('/o/token') == -1 :
+                    current_route_name = resolve(request.path_info).url_name
+                    print(current_route_name)
+                    if not current_route_name in settings.AUTH_EXEMPT_ROUTES:
+                        return redirect('login') 
 
 
 class ValidatedTokenRequiredMiddleware(MiddlewareMixin):
@@ -42,7 +37,7 @@ class ValidatedTokenRequiredMiddleware(MiddlewareMixin):
     def process_request(self,request):
         expires_at = request.session.get('expires_at')
         current_route_name = resolve(request.path_info).url_name
-        print(expires_at, time.time())
+        print("expires at",expires_at, "actual time",time.time(), "values",time.time() >= expires_at)
         if not expires_at or time.time() >= expires_at:
             print('passed')
             return redirect('login')

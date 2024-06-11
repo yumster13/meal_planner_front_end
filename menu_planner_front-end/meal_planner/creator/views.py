@@ -100,44 +100,88 @@ def Camps(request):
     return render(request,'camps.html',context)
 
 def Recipes(request):
-    data = {}
-    headers = {
-        'Referer': f'{settings.API_URL}/api/recipes',
-        "Authorization": f"Bearer {request.session['access_token']}"
-    }
-    response = session.get(f'{settings.API_URL}/api/recipes/', data=data, headers=headers)
-    print(response.json())
-    if response.status_code == 200:
-        recipes = response.json()
-        recipe_dict = {}
-        for recipe in recipes:
-            recipe_dict[recipe['name']] = {
-                'prairie': recipe['prairie'],
-                'tags': recipe['tags']['name'],
-                'avg_price': 0  # You can update this with actual logic if needed
+    if request.method == 'POST':
+        name_form = SearchForm(request.POST)
+        if name_form.is_valid():
+            name = name_form.data['name']
+            recipes = get_recipes_search(name)
+            print(recipes)
+            context = {'recipes':recipes['recipe_dict'],'recipe':True,'searchForm':SearchForm}
+        else:
+            data = {}
+            headers = {
+                'Referer': f'{settings.API_URL}/api/ingredients',
+                "Authorization": f"Bearer {request.session['access_token']}"
             }
-    # print(recipe_dict)
-        context = {'recipes':recipe_dict,'recipe':True}
-        return render(request,'recipes.html',context)
+            response = session.get(f'{settings.API_URL}/api/ingredients/', data=data, headers=headers)
+            if response.status_code == 200:
+                recipes = response.json()
+                recipe_dict = {}
+                for recipe in recipes:
+                    recipe_dict[recipe['name']] = {
+                        'prairie': recipe['prairie'],
+                        'tags': recipe['tags']['name'],
+                        'avg_price': 0  # You can update this with actual logic if needed
+                    }
+                context = {'recipes':recipe_dict,'recipe':True,'searchForm':SearchForm}
     else:
-        return redirect('login')
+        data = {}
+        headers = {
+            'Referer': f'{settings.API_URL}/api/recipes',
+            "Authorization": f"Bearer {request.session['access_token']}"
+        }
+        response = session.get(f'{settings.API_URL}/api/recipes/', data=data, headers=headers)
+        print(response.json())
+        if response.status_code == 200:
+            recipes = response.json()
+            recipe_dict = {}
+            for recipe in recipes:
+                recipe_dict[recipe['name']] = {
+                    'prairie': recipe['prairie'],
+                    'tags': recipe['tags']['name'],
+                    'avg_price': 0  # You can update this with actual logic if needed
+                }
+        # print(recipe_dict)
+        context = {'recipes':recipe_dict,'recipe':True,'searchForm':SearchForm}
+    return render(request,'recipes.html',context)
 
 def Engredients(request):
-    data = {}
-    headers = {
-        'Referer': f'{settings.API_URL}/api/ingredients',
-        "Authorization": f"Bearer {request.session['access_token']}"
-    }
-    response = session.get(f'{settings.API_URL}/api/ingredients/', data=data, headers=headers)
-    if response.status_code == 200:
-        ingredients = response.json()
-        engredients_dict = {}
-        for ingredient in ingredients:
-            engredients_dict[ingredient['name']] = {'unit':ingredient['mesurement'],'cat': ingredient['category']['name'],'avg_price':ingredient['avg_price'],'seasons':ingredient['season']}
-        context = {'engredients':engredients_dict,'engredient':True}
-        return render(request,'engredients.html',context)
+    if request.method == 'POST':
+        name_form = SearchForm(request.POST)
+        if name_form.is_valid():
+            name = name_form.data['name']
+            ingredients = get_ingredients_search(name)
+            print(ingredients)
+            context = {'engredients':ingredients['ingredient_dict'],'engredient':True,'searchForm':SearchForm}
+        else:
+            data = {}
+            headers = {
+                'Referer': f'{settings.API_URL}/api/ingredients',
+                "Authorization": f"Bearer {request.session['access_token']}"
+            }
+            response = session.get(f'{settings.API_URL}/api/ingredients/', data=data, headers=headers)
+            if response.status_code == 200:
+                ingredients = response.json()
+                engredients_dict = {}
+                for ingredient in ingredients:
+                    print(ingredient['season'])
+                    engredients_dict[ingredient['name']] = {'unit':ingredient['mesurement'],'cat': ingredient['category']['name'],'avg_price':ingredient['avg_price'],'seasons':ingredient['season']}
+                context = {'engredients':engredients_dict,'engredient':True,'searchForm':SearchForm}
     else:
-        return redirect('login')
+        data = {}
+        headers = {
+            'Referer': f'{settings.API_URL}/api/ingredients',
+            "Authorization": f"Bearer {request.session['access_token']}"
+        }
+        response = session.get(f'{settings.API_URL}/api/ingredients/', data=data, headers=headers)
+        if response.status_code == 200:
+            ingredients = response.json()
+            engredients_dict = {}
+            for ingredient in ingredients:
+                print(ingredient['season'])
+                engredients_dict[ingredient['name']] = {'unit':ingredient['mesurement'],'cat': ingredient['category']['name'],'avg_price':ingredient['avg_price'],'seasons':ingredient['season']}
+            context = {'engredients':engredients_dict,'engredient':True,'searchForm':SearchForm}
+    return render(request,'engredients.html',context)
     
 def CreateRecipe(request):
     recipeForm = RecipeForm()

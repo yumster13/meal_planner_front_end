@@ -28,6 +28,34 @@ def get_ingredients_from_api():
     else:
         return []
 
+def get_ingredients_search(name):
+    data = {
+        'ingredient': name,
+    }
+    headers = {
+        'Referer': f'{settings.API_URL}/api/ingredientsSearch',
+        "Authorization": f"Bearer {settings.ACCESS_TOKEN}"
+    }
+    response = session.get(f'{settings.API_URL}/api/ingredientsSearch/', data=data, headers=headers)
+    if response.status_code == 200:
+        return response.json()
+    else:
+        return []
+
+def get_recipes_search(name):
+    data = {
+        'recipe': name,
+    }
+    headers = {
+        'Referer': f'{settings.API_URL}/api/recipesSearch',
+        "Authorization": f"Bearer {settings.ACCESS_TOKEN}"
+    }
+    response = session.get(f'{settings.API_URL}/api/recipesSearch/', data=data, headers=headers)
+    if response.status_code == 200:
+        return response.json()
+    else:
+        return []
+
 def get_recipe_id_from_api(recipe_id):
     data = {
         'recipe_id': recipe_id
